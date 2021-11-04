@@ -6,9 +6,9 @@ import java.util.ArrayList;
 public class Read{
 
     private int playerNum;
-    public Read(int playerNum){
+    /*public Read(int playerNum){
         this.playerNum = playerNum;
-    }
+    }*/
 
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<ArrayList> fileInfo = new ArrayList<>();
@@ -34,6 +34,7 @@ public class Read{
         filenames.add("example_file_1.csv");*/
 
         for (int i = 0; i < 3; i++){
+            System.out.println("Please enter name for file number " + i);
             ArrayList<String> list = new ArrayList<>();
             String file = fileNames.get(i);
 
@@ -63,12 +64,12 @@ public class Read{
         return fileInfo;
     }
 
-    /*
+
     public static void main(String[] args){
         Read rw = new Read();
-        rw.readIn();
+        //rw.readIn();
         rw.readFiles();
         System.out.println(rw.getFileInfo());
         System.out.println(rw.fileInfo);
-    }*/
+    }
 }
