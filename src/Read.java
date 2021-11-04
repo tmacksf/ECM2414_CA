@@ -5,6 +5,11 @@ import java.util.ArrayList;
 
 public class Read{
 
+    private int playerNum;
+    public Read(int playerNum){
+        this.playerNum = playerNum;
+    }
+
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<ArrayList> fileInfo = new ArrayList<>();
 
@@ -32,10 +37,13 @@ public class Read{
             ArrayList<String> list = new ArrayList<>();
             String file = fileNames.get(i);
 
+            int counter = 0;
+
             try {
                 File fn = new File(file);
                 Scanner f = new Scanner(fn);
                 while (f.hasNextLine()) {
+                    counter ++;
                     list.add(f.nextLine());
                 }
             }
@@ -43,6 +51,10 @@ public class Read{
                 e.printStackTrace();
             }
 
+            if (counter / 3 < playerNum * 11){
+                System.out.println("Too few marbles in bag " + String.valueOf(i));
+                System.exit(1);
+            }
             fileInfo.add(list);
         }
     }
@@ -51,11 +63,12 @@ public class Read{
         return fileInfo;
     }
 
+    /*
     public static void main(String[] args){
         Read rw = new Read();
         rw.readIn();
         rw.readFiles();
         System.out.println(rw.getFileInfo());
         System.out.println(rw.fileInfo);
-    }
+    }*/
 }

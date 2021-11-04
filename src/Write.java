@@ -39,11 +39,11 @@ public class Write {
         }
     }
 
-    public static void main(String[] args){
+    /*public static void main(String[] args){
         Write w = new Write(3);
         w.generator();
         System.out.println(w.playerFiles);
         w.fileWriter(0, "This is a test for index 0 aka player 1\n");
-    }
+    }*/
 
 }
