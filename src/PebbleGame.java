@@ -64,17 +64,11 @@ public class PebbleGame{
         ArrayList<Integer> bagB = fileInfo.get(1);
         ArrayList<Integer> bagC = fileInfo.get(2);
 
-        //Player player = new Player(bagA, bagB, bagC);
-        //Bags bag = new pebbleGame.Bags(bagA, bagB, bagC);
-
-
         pg.bags.addBags(bagA, bagB, bagC);
 
-
-        Thread player = new Thread(new Player());
+        Thread player = new Thread(pg.new Player());
         player.run();
     }
-
 
      class Bags{
 
@@ -174,14 +168,7 @@ public class PebbleGame{
 
     class Player implements Runnable{
 
-        ArrayList<Integer> bagA;
-        ArrayList<Integer> bagB;
-        ArrayList<Integer> bagC;
-
-        public Player(ArrayList bagA, ArrayList bagB, ArrayList bagC){
-            this.bagA = bagA;
-            this.bagB = bagB;
-            this.bagC = bagC;
+        public Player(){
         }
 
         ArrayList<Integer> playerBag = new ArrayList<>();
@@ -227,12 +214,24 @@ public class PebbleGame{
         public synchronized void start(){
             try {
                 for (int i = 0; i < 10; i++) {
+                    //choose random black bag
                     int bagNum = ThreadLocalRandom.current().nextInt(0, 3);
-                    int bagsize = PebbleGame.Bags.getBagSize(bagNum);
-                    System.out.println(bagsize);
-                    int marbleIndex = ThreadLocalRandom.current().nextInt(0, bagsize);
-                    int marble = bags.getPebble(bagNum, marbleIndex);
-
+                    int marbleIndex;
+                    int marble = 0;
+                    switch (bagNum){
+                        case 0: marbleIndex = ThreadLocalRandom.current().nextInt(0, bags.bagA.size());
+                                marble = bags.bagA.get(marbleIndex);
+                                bags.bagA.remove(marbleIndex);
+                            break;
+                        case 1: marbleIndex = ThreadLocalRandom.current().nextInt(0, bags.bagB.size());
+                                marble = bags.bagB.get(marbleIndex);
+                                bags.bagB.remove(marbleIndex);
+                            break;
+                        case 2: marbleIndex = ThreadLocalRandom.current().nextInt(0, bags.bagC.size());
+                                marble = bags.bagC.get(marbleIndex);
+                                bags.bagC.remove(marbleIndex);
+                            break;
+                    }
                     playerBag.add(marble);
                 }
                 if (checker(playerBag)) {
