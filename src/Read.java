@@ -65,11 +65,11 @@ public class Read{
     }
 
 
-    public static void main(String[] args){
+    /*public static void main(String[] args){
         Read rw = new Read();
         //rw.readIn();
         rw.readFiles();
         System.out.println(rw.getFileInfo());
         System.out.println(rw.fileInfo);
-    }
+    }*/
 }

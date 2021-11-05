@@ -8,8 +8,9 @@ import java.util.concurrent.*;
 public class PebbleGame{
 
     ArrayList<ArrayList> players = new ArrayList<>();
+    Bags bags = new Bags();
 
-    public synchronized static void main(String[] args) {
+    public static void main(String[] args) {
         PebbleGame pg = new PebbleGame();
         int numPlayers = 0;
         String players;
@@ -62,13 +63,36 @@ public class PebbleGame{
         ArrayList<Integer> bagA = fileInfo.get(0);
         ArrayList<Integer> bagB = fileInfo.get(1);
         ArrayList<Integer> bagC = fileInfo.get(2);
-    }
-    static class Bags{
 
-        //change to other input method
-        ArrayList<Integer> bagA = new ArrayList<>();
-        ArrayList<Integer> bagB = new ArrayList<>();
-        ArrayList<Integer> bagC = new ArrayList<>();
+        //Player player = new Player(bagA, bagB, bagC);
+        //Bags bag = new pebbleGame.Bags(bagA, bagB, bagC);
+
+
+        pg.bags.addBags(bagA, bagB, bagC);
+
+
+        Thread player = new Thread(new Player());
+        player.run();
+    }
+
+
+     class Bags{
+
+        ArrayList<Integer> bagA;
+        ArrayList<Integer> bagB;
+        ArrayList<Integer> bagC;
+
+        public void addBags(ArrayList bagA, ArrayList bagB, ArrayList bagC){
+            this.bagA = bagA;
+            this.bagB = bagB;
+            this.bagC = bagC;
+        }
+
+        /*public Bags(ArrayList bagA, ArrayList bagB, ArrayList bagC){
+            this.bagA = bagA;
+            this.bagB = bagB;
+            this.bagC = bagC;
+        }*/
 
         ArrayList<Integer> bagX = new ArrayList<>();
         ArrayList<Integer> bagY = new ArrayList<>();
@@ -106,6 +130,7 @@ public class PebbleGame{
             }
             return pebble;
         }
+
         public ArrayList getWhiteBag(int whiteBag){
             if (whiteBag == 0){
                 return bagX;
@@ -147,28 +172,20 @@ public class PebbleGame{
         }
     }
 
-    static class Player implements Runnable{
+    class Player implements Runnable{
 
-        ArrayList<Integer> playerBag = new ArrayList<>();
-        Bags bags = new Bags();
+        ArrayList<Integer> bagA;
+        ArrayList<Integer> bagB;
+        ArrayList<Integer> bagC;
 
-        public void run(){
-            Player player = new Player();
-            //Bags bags = new Bags();
-            try{
-                int playerBag = 0;
-                Thread thread = new Thread();
-                thread.start();
-                thread.join();
-                while (playerBag != 100){
-
-                }
-            }
-            catch(Exception e){
-
-            }
+        public Player(ArrayList bagA, ArrayList bagB, ArrayList bagC){
+            this.bagA = bagA;
+            this.bagB = bagB;
+            this.bagC = bagC;
         }
 
+        ArrayList<Integer> playerBag = new ArrayList<>();
+        //Bags bags = new Bags(bagA, bagB, bagC);
 
         public synchronized int pick() throws InterruptedException{
             //uses thread safe random number to decide what bag
@@ -184,7 +201,14 @@ public class PebbleGame{
             return bagNum;
         }
 
-        public synchronized void deposit(int marble, int whiteBagIndex){
+        /**
+         *
+         * @param playerMarbleIndex for the index of the marble to be removed in the player bag
+         * @param whiteBagIndex the corresponding white bag which the marble is moved to
+         */
+        public synchronized void deposit(int playerMarbleIndex, int whiteBagIndex){
+            int marble = playerBag.get(playerMarbleIndex);
+            playerBag.remove(playerMarbleIndex);
             bags.addToWhiteBag(marble, whiteBagIndex);
         }
 
@@ -198,6 +222,50 @@ public class PebbleGame{
             }
 
             return result;
+        }
+
+        public synchronized void start(){
+            try {
+                for (int i = 0; i < 10; i++) {
+                    int bagNum = ThreadLocalRandom.current().nextInt(0, 3);
+                    int bagsize = PebbleGame.Bags.getBagSize(bagNum);
+                    System.out.println(bagsize);
+                    int marbleIndex = ThreadLocalRandom.current().nextInt(0, bagsize);
+                    int marble = bags.getPebble(bagNum, marbleIndex);
+
+                    playerBag.add(marble);
+                }
+                if (checker(playerBag)) {
+                    System.out.println("Player " + Thread.currentThread().getName() + " has won!");
+                    Thread.sleep(10000);
+                } else {
+                    ;
+                }
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void run(){
+            synchronized (this){
+                //might only need the while or try not sure if both are needed
+                try{
+                    start();
+                    System.out.println(playerBag);
+                    /*int bagTotal = 0;
+                    while (bagTotal != 100){
+                        int correspondingWhiteBag = pick();
+                        int discardIndex = ThreadLocalRandom.current().nextInt(0,playerBag.size());
+                        deposit(discardIndex, correspondingWhiteBag);
+                        checker(playerBag);
+                    }*/
+                }
+                catch(Exception e) {
+                    System.out.println("Exception in the run");
+                }
+            }
         }
 
     }
