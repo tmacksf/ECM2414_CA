@@ -64,7 +64,6 @@ public class PebbleGame{
 
         pg.bags.addBags(bagA, bagB, bagC);
 
-
         //creates
         ExecutorService threadPool = Executors.newFixedThreadPool(numPlayers);
 
@@ -78,85 +77,34 @@ public class PebbleGame{
     }
 
      class Bags{
+        Random random = new Random();
 
-        ArrayList<Integer> bagA;
-        ArrayList<Integer> bagB;
-        ArrayList<Integer> bagC;
+        ArrayList<ArrayList> blackBags = new ArrayList<>();
+        ArrayList<ArrayList> whiteBags = new ArrayList<>();
 
-        public void addBags(ArrayList bagA, ArrayList bagB, ArrayList bagC){
-            this.bagA = bagA;
-            this.bagB = bagB;
-            this.bagC = bagC;
+        public void addBags(ArrayList bagA, ArrayList bagB, ArrayList bagC) {
+            this.blackBags.add(bagA);
+            this.blackBags.add(bagB);
+            this.blackBags.add(bagC);
+            for (int i = 0; i < 3; i++) {
+                this.whiteBags.add(new ArrayList<>());
+            }
         }
 
-        ArrayList<Integer> bagX = new ArrayList<>();
-        ArrayList<Integer> bagY = new ArrayList<>();
-        ArrayList<Integer> bagZ = new ArrayList<>();
-
-        //gets the pebble with a given index and bag number and then removes it from bag
-        /*public int getPebble(int blackBag, int pebbleIndex){
-            int pebble = 0;
-
-            if (blackBag == 0){
-                pebble = bagA.get(pebbleIndex);
-                bagA.remove(pebbleIndex);
-            }
-            else if (blackBag == 1){
-                pebble = bagB.get(pebbleIndex);
-                bagB.remove(pebbleIndex);
-            }
-            else {
-                pebble = bagC.get(pebbleIndex);
-                bagC.remove(pebbleIndex);
-            }
-            return pebble;
-        }*/
-
-        public ArrayList getWhiteBag(int whiteBag){
-            if (whiteBag == 0){
-                return bagX;
-            }
-            else if (whiteBag == 1){
-                return bagY;
-            }
-            else {
-                return bagZ;
-            }
+        public ArrayList getWhiteBag(int bagIndex){
+            return this.whiteBags.get(bagIndex);
         }
 
         //puts the white bag's contents into the corresponding black bag
         public synchronized void emptyWhiteBag(int bagIndex){
-            if (bagIndex == 0){
-                for (int i = 0; i < bagX.size(); i++){
-                    bagA.add(bagX.get(i));
-                }
-
-                bagX.clear();
+            for (int i = 0; i < this.getWhiteBag(bagIndex).size(); i++){
+                this.getBlackBag(bagIndex).add(this.getWhiteBag(bagIndex).get(i));
             }
-            else if (bagIndex == 1){
-                for (int i = 0; i < bagY.size(); i++){
-                    bagB.add(bagY.get(i));
-                }
-                bagY.clear();
-            }
-            else if (bagIndex == 2){
-                for (int i = 0; i < bagZ.size(); i++){
-                    bagC.add(bagZ.get(i));
-                }
-                bagZ.clear();
-            }
+            this.getWhiteBag(bagIndex).clear();
         }
 
         public synchronized void addToWhiteBag(int marble, int bagIndex){
-            if (bagIndex == 0){
-                bagX.add(marble);
-            }
-            else if (bagIndex == 1){
-                bagY.add(marble);
-            }
-            else if (bagIndex == 2){
-                bagZ.add(marble);
-            }
+            this.getWhiteBag(bagIndex).add(marble);
         }
     }
 
@@ -166,104 +114,29 @@ public class PebbleGame{
         }
 
         ArrayList<Integer> playerBag = new ArrayList<>();
-        //Bags bags = new Bags(bagA, bagB, bagC);
 
-        public synchronized int pick() throws InterruptedException{
+        public void pick(){
             //uses thread safe way to determine random number to determine from which black bag a marble will be removed from
             int bagNum = ThreadLocalRandom.current().nextInt(0,3);
             //initializing variables for use inside switch
             int marbleIndex;
-            int marble = 0;
-            int removeIndex;
-            int marbleRemove = 0;
+            int playerBagPebbleIndex;
+            int playerBagPebble;
+
+            int[] pebbleAndBag = bags.getBlackBagPebble();
+
 
             //System.out.println("Picking called");
-            //System.out.println("Player bag: " + playerBag);
-
-
-            switch (bagNum) {
-                case 0:
-                    //Get marble from player by index
-                    removeIndex = ThreadLocalRandom.current().nextInt(0,playerBag.size());
-                    marbleRemove = playerBag.get(removeIndex);
-                    //Remove marble from player bag and add to white bag
-                    playerBag.remove(removeIndex);
-                    bags.addToWhiteBag(marbleRemove, 0);
-
-                    //System.out.println(bags.bagX);
-
-                    //Random marble to be added to player bag from black bag
-                    marbleIndex = ThreadLocalRandom.current().nextInt(0, bags.bagA.size());
-                    marble = bags.bagA.get(marbleIndex);
-
-                    //Remove marble from black bag
-                    bags.bagA.remove(marbleIndex);
-
-                    if (bags.bagA.size() < 1){
-                        bags.emptyWhiteBag(0);
-
-                        //System.out.println("Bag X was emptied");
-                    }
-                    break;
-                case 1:
-                    //Get marble from player by index
-                    removeIndex = ThreadLocalRandom.current().nextInt(0,playerBag.size());
-                    marbleRemove = playerBag.get(removeIndex);
-                    //Remove marble from player bag and add to white bag
-                    playerBag.remove(removeIndex);
-                    bags.addToWhiteBag(marbleRemove, 1);
-
-                    //System.out.println(bags.bagY);
-
-                    //Random marble to be added to player bag from black bag
-                    marbleIndex = ThreadLocalRandom.current().nextInt(0, bags.bagB.size());
-                    marble = bags.bagB.get(marbleIndex);
-                    bags.bagB.remove(marbleIndex);
-
-                    if (bags.bagB.size() < 1){
-                        bags.emptyWhiteBag(1);
-
-                        //System.out.println("Bag Y was emptied");
-                    }
-                    break;
-                case 2:
-                    //Get marble from player by index
-                    removeIndex = ThreadLocalRandom.current().nextInt(0,playerBag.size());
-                    marbleRemove = playerBag.get(removeIndex);
-                    //Remove marble from player bag and add to white bag
-                    playerBag.remove(removeIndex);
-                    bags.addToWhiteBag(marbleRemove, 2);
-
-                    //System.out.println(bags.bagZ);
-
-                    //Random marble to be added to player bag from black bag
-                    marbleIndex = ThreadLocalRandom.current().nextInt(0, bags.bagC.size());
-                    marble = bags.bagC.get(marbleIndex);
-                    bags.bagC.remove(marbleIndex);
-
-                    if (bags.bagC.size() < 1){
-                        bags.emptyWhiteBag(2);
-
-                        //System.out.println("Bag Z was emptied");
-                    }
-                    break;
+            synchronized (this){
+                playerBagPebbleIndex = ThreadLocalRandom.current().nextInt(0, 10);
+                playerBagPebble = playerBag.get(playerBagPebbleIndex);
+                playerBag.remove(playerBagPebbleIndex);
+                bags.addToWhiteBag(playerBagPebble, pebbleAndBag[1]);
             }
 
-            //puts marble into players bag
-            //System.out.println("Marble to be added to player bag: " + marble);
-            playerBag.add(marble);
-            return bagNum;
-        }
-
-        /**
-         *
-         * @param playerMarbleIndex for the index of the marble to be removed in the player bag
-         * @param whiteBagIndex the corresponding white bag which the marble is moved to
-         */
-        public synchronized void deposit(int playerMarbleIndex, int whiteBagIndex){
-            int marble = playerBag.get(playerMarbleIndex);
-            playerBag.remove(playerMarbleIndex);
-            bags.addToWhiteBag(marble, whiteBagIndex);
+            //Picks marble from black bag, stores it in final variable marble and checks if black bag is empty
+            final int addToPlayerBagPebble = pebbleAndBag[0];
+            playerBag.add(addToPlayerBagPebble);
         }
 
         public boolean checker(){
@@ -280,7 +153,7 @@ public class PebbleGame{
                 checking = true;
             }
 
-            return result;
+            return checking;
         }
 
         /**
@@ -289,28 +162,12 @@ public class PebbleGame{
         public synchronized void start(){
             try {
                 for (int i = 0; i < 10; i++) {
-                    //choose random black bag
-                    int bagNum = ThreadLocalRandom.current().nextInt(0, 3);
-                    int marbleIndex;
-                    int marble = 0;
-                    switch (bagNum){
-                        case 0: marbleIndex = ThreadLocalRandom.current().nextInt(0, bags.bagA.size());
-                                marble = bags.bagA.get(marbleIndex);
-                                bags.bagA.remove(marbleIndex);
-                            break;
-                        case 1: marbleIndex = ThreadLocalRandom.current().nextInt(0, bags.bagB.size());
-                                marble = bags.bagB.get(marbleIndex);
-                                bags.bagB.remove(marbleIndex);
-                            break;
-                        case 2: marbleIndex = ThreadLocalRandom.current().nextInt(0, bags.bagC.size());
-                                marble = bags.bagC.get(marbleIndex);
-                                bags.bagC.remove(marbleIndex);
-                            break;
-                    }
-                    playerBag.add(marble);
+                    int startPebble;
+                    startPebble = bags.getBlackBagPebble()[0];
+                    playerBag.add(startPebble);
                 }
                 boolean checking = checker();
-                System.out.println("winner check: " + checking);
+                System.out.println("Winner check: " + checking);
                 if (checking) {
                     System.out.println("Player " + Thread.currentThread().getName() + " has won!");
                     System.exit(0);
@@ -326,25 +183,20 @@ public class PebbleGame{
         @Override
         public synchronized void run(){
             synchronized (this){
-                //might only need the while or try not sure if both are needed
+
                 try{
                     //Start is responsible for initiating the player bags
 
                     start();
                     boolean checking = false;
-                    int correspondingWhiteBag =0;
 
                     while (!checking){
-
                         try{
                             pick();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
-                        //int discardIndex = ThreadLocalRandom.current().nextInt(0,playerBag.size());
-                        //deposit(discardIndex, correspondingWhiteBag);
                         checking = checker();
-
                     }
                     System.out.println("Player " + Thread.currentThread().getName() + " has won!");
                     System.out.println(playerBag);
