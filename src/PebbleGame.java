@@ -2,6 +2,7 @@ import java.io.File;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.concurrent.*;
+import java.util.Random;
 
 public class PebbleGame{
 
@@ -91,6 +92,31 @@ public class PebbleGame{
             }
         }
 
+         /**
+          * This method chooses a random marble from a random black bag and removes it from said black bag while storing the marble in a final variable
+          * @return
+          */
+         public synchronized int[] getBlackBagPebble(){
+             int[] pebbleAndBag = new int[2];
+             //change to regular random no longer multithreaded
+             int bagNum = random.nextInt(3);
+             //initializing variables for use inside switch
+             int pebbleIndex = random.nextInt(bags.getBlackBag(bagNum).size());
+             final int blackBagPebble = (int) bags.getBlackBag(bagNum).get(pebbleIndex);
+             bags.getBlackBag(bagNum).remove(pebbleIndex);
+             if (bags.getBlackBag(bagNum).size() < 1){
+                 emptyWhiteBag(bagNum);
+             }
+             pebbleAndBag[0] = blackBagPebble;
+             pebbleAndBag[1] = bagNum;
+
+             return pebbleAndBag;
+         }
+
+         public ArrayList getBlackBag(int bagIndex){
+             return this.blackBags.get(bagIndex);
+         }
+
         public ArrayList getWhiteBag(int bagIndex){
             return this.whiteBags.get(bagIndex);
         }
@@ -117,7 +143,6 @@ public class PebbleGame{
 
         public void pick(){
             //uses thread safe way to determine random number to determine from which black bag a marble will be removed from
-            int bagNum = ThreadLocalRandom.current().nextInt(0,3);
             //initializing variables for use inside switch
             int marbleIndex;
             int playerBagPebbleIndex;
