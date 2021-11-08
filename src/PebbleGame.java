@@ -1,6 +1,4 @@
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Collections;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.concurrent.*;
@@ -67,11 +65,16 @@ public class PebbleGame{
         pg.bags.addBags(bagA, bagB, bagC);
 
 
-        for (int i = 0; i < numPlayers; i ++) {
-            Thread player = new Thread(pg.new Player());
+        //creates
+        ExecutorService threadPool = Executors.newFixedThreadPool(numPlayers);
 
-            player.run();
+        for (int i = 0; i < numPlayers; i ++) {
+            System.out.println("Player " + i + " has started");
+            Runnable player = pg.new Player();
+            //need to learn about threadpool
+            threadPool.execute(player);
         }
+
     }
 
      class Bags{
@@ -89,20 +92,6 @@ public class PebbleGame{
         ArrayList<Integer> bagX = new ArrayList<>();
         ArrayList<Integer> bagY = new ArrayList<>();
         ArrayList<Integer> bagZ = new ArrayList<>();
-
-        public int getBagSize(int blackBag){
-            int bagSize = 0;
-            if (blackBag == 0){
-                bagSize += bagX.size();
-            }
-            else if (blackBag == 1){
-                bagSize += bagY.size();
-            }
-            else {
-                bagSize += bagZ.size();
-            }
-            return bagSize;
-        }
 
         //gets the pebble with a given index and bag number and then removes it from bag
         /*public int getPebble(int blackBag, int pebbleIndex){
@@ -145,14 +134,14 @@ public class PebbleGame{
                 bagX.clear();
             }
             else if (bagIndex == 1){
-                for (int i = 0; i < bagX.size(); i++){
-                    bagA.add(bagX.get(i));
+                for (int i = 0; i < bagY.size(); i++){
+                    bagB.add(bagY.get(i));
                 }
                 bagY.clear();
             }
             else if (bagIndex == 2){
-                for (int i = 0; i < bagX.size(); i++){
-                    bagA.add(bagX.get(i));
+                for (int i = 0; i < bagZ.size(); i++){
+                    bagC.add(bagZ.get(i));
                 }
                 bagZ.clear();
             }
@@ -188,8 +177,8 @@ public class PebbleGame{
             int removeIndex;
             int marbleRemove = 0;
 
-            System.out.println("Picking called");
-            System.out.println("Player bag: " + playerBag);
+            //System.out.println("Picking called");
+            //System.out.println("Player bag: " + playerBag);
 
 
             switch (bagNum) {
@@ -200,7 +189,8 @@ public class PebbleGame{
                     //Remove marble from player bag and add to white bag
                     playerBag.remove(removeIndex);
                     bags.addToWhiteBag(marbleRemove, 0);
-                    System.out.println(bags.bagX);
+
+                    //System.out.println(bags.bagX);
 
                     //Random marble to be added to player bag from black bag
                     marbleIndex = ThreadLocalRandom.current().nextInt(0, bags.bagA.size());
@@ -211,7 +201,8 @@ public class PebbleGame{
 
                     if (bags.bagA.size() < 1){
                         bags.emptyWhiteBag(0);
-                        System.out.println("Bag was emptied");
+
+                        //System.out.println("Bag X was emptied");
                     }
                     break;
                 case 1:
@@ -221,7 +212,8 @@ public class PebbleGame{
                     //Remove marble from player bag and add to white bag
                     playerBag.remove(removeIndex);
                     bags.addToWhiteBag(marbleRemove, 1);
-                    System.out.println(bags.bagY);
+
+                    //System.out.println(bags.bagY);
 
                     //Random marble to be added to player bag from black bag
                     marbleIndex = ThreadLocalRandom.current().nextInt(0, bags.bagB.size());
@@ -230,7 +222,8 @@ public class PebbleGame{
 
                     if (bags.bagB.size() < 1){
                         bags.emptyWhiteBag(1);
-                        System.out.println("Bag was emptied");
+
+                        //System.out.println("Bag Y was emptied");
                     }
                     break;
                 case 2:
@@ -240,7 +233,8 @@ public class PebbleGame{
                     //Remove marble from player bag and add to white bag
                     playerBag.remove(removeIndex);
                     bags.addToWhiteBag(marbleRemove, 2);
-                    System.out.println(bags.bagZ);
+
+                    //System.out.println(bags.bagZ);
 
                     //Random marble to be added to player bag from black bag
                     marbleIndex = ThreadLocalRandom.current().nextInt(0, bags.bagC.size());
@@ -249,13 +243,14 @@ public class PebbleGame{
 
                     if (bags.bagC.size() < 1){
                         bags.emptyWhiteBag(2);
-                        System.out.println("Bag was emptied");
+
+                        //System.out.println("Bag Z was emptied");
                     }
                     break;
             }
 
             //puts marble into players bag
-            System.out.println("Marble to be added to player bag" + marble);
+            //System.out.println("Marble to be added to player bag: " + marble);
             playerBag.add(marble);
             return bagNum;
         }
@@ -278,8 +273,8 @@ public class PebbleGame{
             int total = 0;
             for (int i = 0; i < playerBag.size(); i++){
                 total += playerBag.get(i);
-                System.out.println("This is the total of the current player bag " + total);
             }
+            //System.out.println("This is the total of the current player bag " + total);
 
             if (total == 100){
                 checking = true;
@@ -329,7 +324,7 @@ public class PebbleGame{
         }
 
         @Override
-        public void run(){
+        public synchronized void run(){
             synchronized (this){
                 //might only need the while or try not sure if both are needed
                 try{
@@ -340,11 +335,20 @@ public class PebbleGame{
                     int correspondingWhiteBag =0;
 
                     while (!checking){
-                        pick();
-                        int discardIndex = ThreadLocalRandom.current().nextInt(0,playerBag.size());
+
+                        try{
+                            pick();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        //int discardIndex = ThreadLocalRandom.current().nextInt(0,playerBag.size());
                         //deposit(discardIndex, correspondingWhiteBag);
                         checking = checker();
+
                     }
+                    System.out.println("Player " + Thread.currentThread().getName() + " has won!");
+                    System.out.println(playerBag);
+                    System.exit(0);
                 }
                 catch(Exception e) {
                     e.printStackTrace();
