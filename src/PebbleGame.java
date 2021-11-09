@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileWriter;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.concurrent.*;
@@ -70,7 +71,7 @@ public class PebbleGame{
 
         for (int i = 0; i < numPlayers; i ++) {
             System.out.println("Player " + i + " has started");
-            Runnable player = pg.new Player();
+            Runnable player = pg.new Player(i+1);
             //need to learn about threadpool
             threadPool.execute(player);
         }
@@ -100,7 +101,7 @@ public class PebbleGame{
              int[] pebbleAndBag = new int[2];
              //change to regular random no longer multithreaded
              int bagNum = random.nextInt(3);
-             //initializing variables for use inside switch
+
              int pebbleIndex = random.nextInt(bags.getBlackBag(bagNum).size());
              final int blackBagPebble = (int) bags.getBlackBag(bagNum).get(pebbleIndex);
              bags.getBlackBag(bagNum).remove(pebbleIndex);
@@ -136,8 +137,13 @@ public class PebbleGame{
 
     class Player implements Runnable{
 
-        public Player(){
+        int playerId;
+
+        public Player(int playerId){
+            this.playerId = playerId;
         }
+
+        private String playerOutputFile = "player" + playerId + "output.txt";
 
         ArrayList<Integer> playerBag = new ArrayList<>();
 
@@ -150,7 +156,6 @@ public class PebbleGame{
 
             int[] pebbleAndBag = bags.getBlackBagPebble();
 
-
             //System.out.println("Picking called");
             synchronized (this){
                 playerBagPebbleIndex = ThreadLocalRandom.current().nextInt(0, 10);
@@ -162,6 +167,17 @@ public class PebbleGame{
             //Picks marble from black bag, stores it in final variable marble and checks if black bag is empty
             final int addToPlayerBagPebble = pebbleAndBag[0];
             playerBag.add(addToPlayerBagPebble);
+
+            String outputMessage = "Player " + playerId + " has picked " + pebbleAndBag[0] + " from bag " + pebbleAndBag[1] + "\n";
+
+            try{
+                FileWriter writer = new FileWriter(playerOutputFile, true);
+                writer.write(outputMessage);
+                writer.close();
+            }
+            catch (Exception e){
+
+            }
         }
 
         public boolean checker(){
@@ -188,8 +204,32 @@ public class PebbleGame{
             try {
                 for (int i = 0; i < 10; i++) {
                     int startPebble;
-                    startPebble = bags.getBlackBagPebble()[0];
+                    int[] startPebbleArr = bags.getBlackBagPebble();
+                    startPebble = startPebbleArr[0];
+                    //startPebble = bags.getBlackBagPebble()[0];
                     playerBag.add(startPebble);
+
+                    String outputMessage = "Player " + playerId + " has picked " + startPebble + " from bag " + startPebbleArr[1] + "\n";
+                    //creates the player output file if this is the first pebble pulled
+                    if (i == 0){
+                        try{
+                            FileWriter writer = new FileWriter(playerOutputFile);
+                            writer.write(outputMessage);
+                            writer.close();
+                        }catch (Exception e){
+
+                        }
+                    }
+                    else{
+                        try{
+                            FileWriter writer = new FileWriter(playerOutputFile, true);
+                            writer.write(outputMessage);
+                            writer.close();
+                        }
+                        catch (Exception e){
+
+                        }
+                    }
                 }
                 boolean checking = checker();
                 System.out.println("Winner check: " + checking);
@@ -206,15 +246,13 @@ public class PebbleGame{
         }
 
         @Override
-        public synchronized void run(){
+        public void run(){
             synchronized (this){
-
                 try{
                     //Start is responsible for initiating the player bags
-
+                    System.out.println("Player id: " + playerId);
                     start();
                     boolean checking = false;
-
                     while (!checking){
                         try{
                             pick();
@@ -223,7 +261,7 @@ public class PebbleGame{
                         }
                         checking = checker();
                     }
-                    System.out.println("Player " + Thread.currentThread().getName() + " has won!");
+                    System.out.println("Player " + playerId + " has won!");
                     System.out.println(playerBag);
                     System.exit(0);
                 }
@@ -232,6 +270,5 @@ public class PebbleGame{
                 }
             }
         }
-
     }
 }
