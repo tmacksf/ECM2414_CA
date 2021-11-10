@@ -28,12 +28,6 @@ public class PlayerTest {
 
     @Test
     public void startTest() {
-
-        for (int i = 0; i < sizeOfBags; i ++){
-            blackPebbleBag.add(i+1);
-        }
-        bags.addBags(blackPebbleBag, blackPebbleBag, blackPebbleBag);
-
         player.start();
         ArrayList playerBag = player.playerBag;
         Assert.assertEquals(10, playerBag.size());
@@ -41,10 +35,18 @@ public class PlayerTest {
 
     @Test
     public void checkerTest(){
+        player.playerBag.clear();
         for (int i = 0; i < 10; i ++){
             player.playerBag.add(10);
         }
         assertEquals(true, player.checker());
+
+        player.playerBag.clear();
+        for (int i = 0; i < 10; i ++){
+            player.playerBag.add(1);
+        }
+        assertEquals(false, player.checker());
+
     }
 
     @Test

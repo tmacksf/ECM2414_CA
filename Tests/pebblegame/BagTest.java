@@ -4,6 +4,7 @@ import com.sun.source.tree.AssertTree;
 import org.junit.*;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import static org.junit.Assert.*;
 
@@ -38,7 +39,6 @@ public class BagTest {
     public void getBlackBagPebbleTest(){
         int[] getBlackBagPebbleOutput;
         getBlackBagPebbleOutput = bags.getBlackBagPebble();
-        System.out.println(getBlackBagPebbleOutput);
 
         if (0 < getBlackBagPebbleOutput[1] && getBlackBagPebbleOutput[1] < 51) {
             assertTrue(true);
@@ -51,6 +51,16 @@ public class BagTest {
 
     @Test
     public void emptyWhiteBagTest(){
+        Random random = new Random();
+        int randomIndex = random.nextInt(3);
+        for (int i = 0; i < 10; i++){
+            bags.whiteBags.get(randomIndex).add(i+1);
+        }
 
+        assertEquals(3, bags.whiteBags.size());
+        assertEquals(10, bags.whiteBags.get(randomIndex).size());
+
+        bags.emptyWhiteBag(0);
+        assertEquals(0, bags.whiteBags.get(randomIndex).size());
     }
 }
