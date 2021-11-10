@@ -78,7 +78,6 @@ public class PebbleGame{
         for (int i = 0; i < numPlayers; i ++) {
             System.out.println("Player " + i + " has started");
             Runnable player = pg.new Player(bags, i+1);
-            //need to learn about threadpool
             threadPool.execute(player);
         }
 
