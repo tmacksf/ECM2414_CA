@@ -12,7 +12,6 @@ public class BagTest {
     PebbleGame pebbleGame = new PebbleGame();
     PebbleGame.Bags bags = pebbleGame.new Bags();
     int tempPlayerId = 1;
-    PebbleGame.Player player = pebbleGame.new Player(tempPlayerId);
 
     ArrayList<Integer> blackPebbleBag = new ArrayList<>();
 

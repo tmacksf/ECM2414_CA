@@ -10,7 +10,7 @@ import java.util.Random;
 public class PebbleGame{
 
     //creates an instance of the bags class which is universally accessible
-    Bags bags = new Bags();
+    //Bags bags = new Bags();
 
     public static void main(String[] args) {
         PebbleGame pg = new PebbleGame();
@@ -67,7 +67,9 @@ public class PebbleGame{
         ArrayList<Integer> bagB = fileInfo.get(1);
         ArrayList<Integer> bagC = fileInfo.get(2);
 
-        pg.bags.addBags(bagA, bagB, bagC);
+        PebbleGame.Bags bags = pg.new Bags();
+
+        bags.addBags(bagA, bagB, bagC);
 
         //creates a threadpool for execution
         ExecutorService threadPool = Executors.newFixedThreadPool(numPlayers);
@@ -75,7 +77,7 @@ public class PebbleGame{
         //adds players to the threadpool based on the number of players then executes
         for (int i = 0; i < numPlayers; i ++) {
             System.out.println("Player " + i + " has started");
-            Runnable player = pg.new Player(i+1);
+            Runnable player = pg.new Player(bags, i+1);
             //need to learn about threadpool
             threadPool.execute(player);
         }
@@ -113,11 +115,11 @@ public class PebbleGame{
              int bagNum = random.nextInt(3);
 
              //the pebble is selected here and then removed from the black bag
-             int pebbleIndex = random.nextInt(bags.getBlackBag(bagNum).size());
-             final int blackBagPebble = (int) bags.getBlackBag(bagNum).get(pebbleIndex);
-             bags.getBlackBag(bagNum).remove(pebbleIndex);
+             int pebbleIndex = random.nextInt(getBlackBag(bagNum).size());
+             final int blackBagPebble = (int) getBlackBag(bagNum).get(pebbleIndex);
+             getBlackBag(bagNum).remove(pebbleIndex);
              //checks if the black bag is empty then refills its
-             if (bags.getBlackBag(bagNum).size() < 1){
+             if (getBlackBag(bagNum).size() < 1){
                  emptyWhiteBag(bagNum);
              }
              //adding the value of the pebble and the bag number to the array which is returned so both can be accessed by other methods
@@ -167,9 +169,11 @@ public class PebbleGame{
 
         //a player id which is input when the players are run for ease of output
         int playerId;
+        Bags bags;
 
-        public Player(int playerId){
+        public Player(Bags bags, int playerId){
             this.playerId = playerId;
+            this.bags = bags;
         }
 
         //the player's bag of pebbles

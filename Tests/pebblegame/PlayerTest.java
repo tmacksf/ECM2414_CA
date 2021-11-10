@@ -12,7 +12,7 @@ public class PlayerTest {
     PebbleGame pebbleGame = new PebbleGame();
     PebbleGame.Bags bags = pebbleGame.new Bags();
     int tempPlayerId = 1;
-    PebbleGame.Player player = pebbleGame.new Player(tempPlayerId);
+    PebbleGame.Player player = pebbleGame.new Player(bags, tempPlayerId);
 
     ArrayList<Integer> blackPebbleBag = new ArrayList<>();
 
@@ -49,8 +49,11 @@ public class PlayerTest {
 
     @Test
     public void pickTest(){
+        for (int i = 0; i < 10; i ++) {
+            player.playerBag.add(i+1);
+        }
         player.pick();
-        assertEquals(1, player.playerBag.size());
+        assertEquals(10, player.playerBag.size());
     }
 
 

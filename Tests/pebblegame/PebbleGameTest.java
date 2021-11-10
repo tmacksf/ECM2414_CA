@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 public class PebbleGameTest {
-
+    /*
     PebbleGame pebbleGame = new PebbleGame();
     PebbleGame.Bags bags = pebbleGame.new Bags();
     int tempPlayerId = 1;
@@ -66,5 +66,5 @@ public class PebbleGameTest {
 
     @Test
     public void main() {
-    }
+    }*/
 }
