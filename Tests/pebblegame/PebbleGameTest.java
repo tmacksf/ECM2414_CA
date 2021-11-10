@@ -1,3 +1,5 @@
+package pebblegame;
+
 import com.sun.source.tree.AssertTree;
 import org.junit.*;
 
@@ -60,7 +62,6 @@ public class PebbleGameTest {
         player.start();
         ArrayList playerBag = player.playerBag;
         Assert.assertEquals(10, playerBag.size());
-
     }
 
     @Test
