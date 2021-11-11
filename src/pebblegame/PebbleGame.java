@@ -52,9 +52,15 @@ public class PebbleGame{
                         String weightValues = f.nextLine();
                         String[] arrOfWeighValues = weightValues.split(",", 0);
                         for (String str : arrOfWeighValues) temp.add(Integer.valueOf(str));
-                        fileFlag = true;
-                        fileInfo.add(temp);
                     }
+                    if (temp.size() > 11*numPlayers) fileFlag = true;
+                    for (int j = 0; j < temp.size(); j++){
+                        if (temp.get(j) < 0) {
+                            fileFlag = false;
+                            break;
+                        }
+                    }
+                    if (fileFlag) fileInfo.add(temp);
                 } catch (Exception e) {
                     if (fileName.equals("E")) System.exit(0);
                 }
