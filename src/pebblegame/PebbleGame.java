@@ -89,86 +89,86 @@ public class PebbleGame{
 
     }
 
-     class Bags{
-         Random random = new Random();
+    class Bags{
+        Random random = new Random();
 
-         ArrayList<ArrayList> blackBags = new ArrayList<>();
-         ArrayList<ArrayList> whiteBags = new ArrayList<>();
+        ArrayList<ArrayList> blackBags = new ArrayList<>();
+        ArrayList<ArrayList> whiteBags = new ArrayList<>();
 
-         /**
-          * This method is to add bags to the bags class and to the black bags arraylist
-          * @param bagA The first bag
-          * @param bagB The second bag
-          * @param bagC The third bag
-          */
-         public void addBags(ArrayList bagA, ArrayList bagB, ArrayList bagC) {
-             this.blackBags.add(bagA);
-             this.blackBags.add(bagB);
-             this.blackBags.add(bagC);
-             for (int i = 0; i < 3; i++) {
-                 this.whiteBags.add(new ArrayList<>());
-             }
-         }
+        /**
+         * This method is to add bags to the bags class and to the black bags arraylist
+         * @param bagA The first bag
+         * @param bagB The second bag
+         * @param bagC The third bag
+         */
+        public void addBags(ArrayList bagA, ArrayList bagB, ArrayList bagC) {
+            this.blackBags.add(bagA);
+            this.blackBags.add(bagB);
+            this.blackBags.add(bagC);
+            for (int i = 0; i < 3; i++) {
+                this.whiteBags.add(new ArrayList<>());
+            }
+        }
 
-         /**
-          * This method chooses a random pebble from a random black bag and removes it from said black bag while storing the pebble in a final variable
-          * @return an array containing the pebble value and the black bag that it was pulled from
-          */
-         public synchronized int[] getBlackBagPebble(){
-             int[] pebbleAndBag = new int[2];
-             //gets a random number between 0 and 2 to decide what bag to pick from
-             int bagNum = random.nextInt(3);
+        /**
+         * This method chooses a random pebble from a random black bag and removes it from said black bag while storing the pebble in a final variable
+         * @return an array containing the pebble value and the black bag that it was pulled from
+         */
+        public synchronized int[] getBlackBagPebble(){
+            int[] pebbleAndBag = new int[2];
+            //gets a random number between 0 and 2 to decide what bag to pick from
+            int bagNum = random.nextInt(3);
 
-             //the pebble is selected here and then removed from the black bag
-             int pebbleIndex = random.nextInt(getBlackBag(bagNum).size());
-             final int blackBagPebble = (int) getBlackBag(bagNum).get(pebbleIndex);
-             getBlackBag(bagNum).remove(pebbleIndex);
-             //checks if the black bag is empty then refills its
-             if (getBlackBag(bagNum).size() < 1){
-                 emptyWhiteBag(bagNum);
-             }
-             //adding the value of the pebble and the bag number to the array which is returned so both can be accessed by other methods
-             pebbleAndBag[0] = blackBagPebble;
-             pebbleAndBag[1] = bagNum;
+            //the pebble is selected here and then removed from the black bag
+            int pebbleIndex = random.nextInt(getBlackBag(bagNum).size());
+            final int blackBagPebble = (int) getBlackBag(bagNum).get(pebbleIndex);
+            getBlackBag(bagNum).remove(pebbleIndex);
+            //checks if the black bag is empty then refills its
+            if (getBlackBag(bagNum).size() < 1){
+                emptyWhiteBag(bagNum);
+            }
+            //adding the value of the pebble and the bag number to the array which is returned so both can be accessed by other methods
+            pebbleAndBag[0] = blackBagPebble;
+            pebbleAndBag[1] = bagNum;
 
-             return pebbleAndBag;
-         }
+            return pebbleAndBag;
+        }
 
-         /**
-          * method to get a black bag using the index of the bag
-          * @param bagIndex the index of the black bag within the blackBags arraylist
-          * @return the Arraylist of the black bag specified
-          */
-         public ArrayList getBlackBag(int bagIndex){
+        /**
+         * method to get a black bag using the index of the bag
+         * @param bagIndex the index of the black bag within the blackBags arraylist
+         * @return the Arraylist of the black bag specified
+         */
+        public ArrayList getBlackBag(int bagIndex){
              return this.blackBags.get(bagIndex);
          }
 
-         /**
-          * method to get a white bag using the index of the bag
-          * @param bagIndex the index of the white bag within the whiteBags arraylist
-          * @return the arraylist of the white bag specified
-          */
-         public ArrayList getWhiteBag(int bagIndex){
+        /**
+         * method to get a white bag using the index of the bag
+         * @param bagIndex the index of the white bag within the whiteBags arraylist
+         * @return the arraylist of the white bag specified
+         */
+        public ArrayList getWhiteBag(int bagIndex){
             return this.whiteBags.get(bagIndex);
         }
 
-         //puts the white bag's contents into the corresponding black bag
-         public synchronized void emptyWhiteBag(int bagIndex){
+        //puts the white bag's contents into the corresponding black bag
+        public synchronized void emptyWhiteBag(int bagIndex){
             for (int i = 0; i < this.getWhiteBag(bagIndex).size(); i++){
                 this.getBlackBag(bagIndex).add(this.getWhiteBag(bagIndex).get(i));
             }
             this.getWhiteBag(bagIndex).clear();
-         }
+        }
 
-         /**
-          * method to add a pebble to a white bag after it has been discarded from the players hand
-          * @param pebble the value of the pebble
-          * @param bagIndex the corresponding which bag to the black bag which has been accessed
-          */
-         public synchronized void addToWhiteBag(int pebble, int bagIndex){
+        /**
+         * method to add a pebble to a white bag after it has been discarded from the players hand
+         * @param pebble the value of the pebble
+         * @param bagIndex the corresponding which bag to the black bag which has been accessed
+         */
+        public synchronized void addToWhiteBag(int pebble, int bagIndex){
             this.getWhiteBag(bagIndex).add(pebble);
         }
-     }
+    }
 
     class Player implements Runnable{
 
