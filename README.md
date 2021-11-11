@@ -1,7 +1,7 @@
 # ECM2414
 
 ___
-##Pebble Game
+## Pebble Game
 This class file hold all game functionality. When the game is run, the user 
 will be prompted to enter the number of players and the files which the game
 is reliant on. The number of players must be an integer greater than 0. The 
@@ -11,17 +11,17 @@ number of players. After these are entered, the game will commence and write to
 output files for each player. Once the game is finished, the command line will
 output the winner and the game will end.
 
-###Imports
+### Imports
 - java.io
 - java.util
 ___
-##Testing
+## Testing
 Two test classes are contained within the test folder and have no external 
 dependencies, therefore can be run without any user input.
-###Imports
+### Imports
 - java.util
 - org.junit
 
-##GitHub
+## GitHub
 For the entire development process GitHub was utilized.
 https://github.com/tmacksf/ECM2414_CA
