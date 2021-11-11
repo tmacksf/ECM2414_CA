@@ -21,6 +21,7 @@ dependencies, therefore can be run without any user input.
 ###Imports
 - java.util
 - org.junit
-###GitHub
+
+##GitHub
 For the entire development process GitHub was utilized.
 https://github.com/tmacksf/ECM2414_CA
